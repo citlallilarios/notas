@@ -3,24 +3,51 @@ const App = ()=> {
   // hook -> use.....
   //state -> useState
 
-  const [state, setState] = useState("");
+  const [inputsState, setInputsState] = useState({
+    title: "",
+    date: "",
+    note: ""
+  });
+  
 
-  const handleInputChage = (event) => {
-   setState(event.target.value);
-
+  const handleInputChange = (event) => {
+   setInputsState({...inputsState, [event.target.name]: event.target.value });
   };
+  
 
   return (
     <div className="App">
-        <h3>notas</h3>
+        <h3>Nota</h3>
         <label>
-           Input de prueba 
+          Titulo
         <input 
-        id="pruebaID" 
-        name="prueba" 
+        id="title" 
+        name="title" 
         type="text" 
-        onChange={handleInputChage}
-        value={state}
+        onChange={handleInputChange}
+        value={inputsState.title}
+         />
+         </label>
+        <br />
+         <label>
+          Fecha
+        <input 
+        id="date" 
+        name="date" 
+        type="text" 
+        onChange={handleInputChange}
+        value={inputsState.date}
+         />
+         </label>
+         <br />
+         <label>
+           Notas
+        <input 
+        id="note" 
+        name="note" 
+        type="text" 
+        onChange={handleInputChange}
+        value={inputsState.note}
          />
          </label>
     </div>
