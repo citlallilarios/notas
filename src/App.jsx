@@ -21,7 +21,16 @@ const App = ()=> {
   
 
   return (
-    <div className="App">
+    <div className="App container">
+      <div classNmae="row">
+        <div className="col">
+          <h3>Listas</h3>
+        </div>
+      
+      <div className="col">
+        <label className="mb-2">
+        </label>
+      
         <h3>Nota</h3>
         <label>
           Titulo
@@ -34,7 +43,8 @@ const App = ()=> {
          />
          </label>
         <br />
-         <label>
+      
+         <label className="mb-2"> 
           Fecha
         <input 
         id="date" 
@@ -56,7 +66,11 @@ const App = ()=> {
         value={inputsState.note}
          />
          </label>
-         <button className="btn btn-primary me-2" onClick={ handleClickr}>Limpiar </button>
+         </div>
+         </div>
+         <hr />
+         <div className="row">
+         <button className="btn btn-primary me-2" onClick={ handleClickr}>Limpiar </button> </div>
     </div>
   );
 }
