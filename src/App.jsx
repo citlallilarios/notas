@@ -1,14 +1,20 @@
 import { useState } from "react";
 
 const App = () => {
-  // hook -> use .....
-  //state -> useState
+  //hook -> use .....
+  //state ->useState
 
   const [inputsState, setInputsState] = useState({
     title: "",
     date: "",
     note: "",
   });
+
+  const [isSelected, setIsSelected] = useState({
+    status: false,
+    noteSelected: null,
+  });
+
   let initialState = JSON.parse(localStorage.getItem("notas")) || [];
   const [notas, setNotas] = useState(initialState);
 
@@ -18,12 +24,14 @@ const App = () => {
 
   const handleClickLimpiar = (event) => {
     setInputsState({ title: "", date: "", note: "" });
+    setIsSelected({ status: false, noteSelected: null });
   };
 
   const handleClickGuardar = () => {
     setNotas([...notas, inputsState]);
-    localStorage.setItem("notas", JSON.stringify(notas));
+    localStorage.setItem("notas", JSON.stringify([...notas, inputsState]));
     handleClickLimpiar();
+    setIsSelected({ status: false, noteSelected: null });
   };
 
   const handleRemoveNote = (index) => {
@@ -37,36 +45,74 @@ const App = () => {
     setNotas(nuevoArreglo);
   };
 
+  const handleClickLimpiarLista = () => {
+    setNotas([]);
+    localStorage.setItem("notas", JSON.stringify([]));
+  };
+
+  const handleClickNota = (index) => {
+    setIsSelected({ status: true, noteSelected: index });
+    setInputsState({
+      title: notas[index].title,
+      date: notas[index].date,
+      note: notas[index].note,
+    });
+  };
+
+  const handleClickActualizar = () => {
+    let listaModificada = notas;
+    listaModificada[isSelected.noteSelected] = inputsState;
+    console.log(isSelected);
+    setNotas(listaModificada);
+    localStorage.setItem("notas", JSON.stringify(listaModificada));
+    handleClickLimpiar();
+    setIsSelected({ status: false, noteSelected: null });
+  };
+
   return (
     <div className="App container">
       <div className="row">
         <div className="col">
-          <h3>lista</h3>
-          <ul>
-            {notas.map((nota, index) => {
-              return (
-                <li key={index}>
-                  {nota.title} ({nota.date}) {nota.note} &nbsp;
-                  <i
-                    className="bi-x-circle"
-                    onClick={() => handleRemoveNote(index)}
-                    style={{
-                      color: "red",
-                      cursor: "pointer",
-                      fontSize: "0.75rem",
-                    }}
+          <h3>Lista</h3>
+          {notas.length === 0 ? (
+            <p>No hay notas capturadas.</p>
+          ) : (
+            <ul>
+              {notas.map((nota, index) => {
+                return (
+                  <li
+                    onClick={() => handleClickNota(index)}
+                    key={index}
+                    style={{ cursor: "pointer" }}
                   >
-                    {" "}
-                  </i>
-                </li>
-              );
-            })}
-          </ul>
+                    {nota.title} ({nota.date})&nbsp;
+                    <i
+                      className="bi-x-circle"
+                      onClick={() => handleRemoveNote(index)}
+                      style={{
+                        color: "red",
+                        cursor: "pointer",
+                        fontSize: "0.75rem",
+                      }}
+                    ></i>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={handleClickLimpiarLista}
+            disabled={notas.length === 0}
+          >
+            Limpiar lista
+          </button>
         </div>
         <div className="col">
           <h3>Notas</h3>
-          <label className="mb-2" style={{ width: "100%" }}></label>
-          <label style={{ width: "100%" }}>
+          <label className="mb-2" style={{ width: "100%" }}>
             Titulo
             <input
               id="title"
@@ -95,7 +141,6 @@ const App = () => {
             <textarea
               id="note"
               name="note"
-              type="text"
               onChange={handleInputChange}
               value={inputsState.note}
               style={{ width: "100%" }}
@@ -105,19 +150,48 @@ const App = () => {
           <div className="row">
             <span className="col">
               <button
-                className="btn btn-primary me-2"
+                type="button"
+                className="btn btn-primary"
                 onClick={handleClickLimpiar}
                 style={{ width: "100%" }}
+                disabled={
+                  inputsState.title === "" &&
+                  inputsState.date === "" &&
+                  inputsState.note === ""
+                }
               >
-                limpiar
+                Limpiar
               </button>
             </span>
+            {isSelected.status && (
+              <span className="col">
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleClickActualizar}
+                  style={{ width: "100%" }}
+                  disabled={
+                    inputsState.title === "" ||
+                    inputsState.date === "" ||
+                    inputsState.note === ""
+                  }
+                >
+                  Actualizar
+                </button>
+              </span>
+            )}
+
             <span className="col">
               <button
                 type="button"
                 className="btn btn-primary"
                 onClick={handleClickGuardar}
-                style={{ whith: "100%" }}
+                style={{ width: "100%" }}
+                disabled={
+                  inputsState.title === "" ||
+                  inputsState.date === "" ||
+                  inputsState.note === ""
+                }
               >
                 Guardar
               </button>
